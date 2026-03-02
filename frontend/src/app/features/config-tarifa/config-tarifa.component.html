@@ -1,0 +1,51 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Configuração de tarifa</mat-card-title>
+    <mat-card-subtitle>Defina o valor inicial e o valor acrescido a cada intervalo de tempo. O cálculo usa apenas o tempo real.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @if (configAtiva) {
+      <div class="config-ativa">
+        <strong>Em uso:</strong> Valor inicial <strong>R$ {{ configAtiva.valorInicial | number:'1.2-2' }}</strong>,
+        a cada <strong>{{ configAtiva.intervaloQuantidade }} {{ labelUnidade(configAtiva.intervaloUnidade) }}</strong>
+        adiciona <strong>R$ {{ configAtiva.valorPorIntervalo | number:'1.2-2' }}</strong>.
+      </div>
+    } @else {
+      <p class="empty">Nenhuma configuração ativa. Preencha o formulário e salve.</p>
+    }
+
+    <h3 class="section-title">Alterar / Nova configuração</h3>
+    <form [formGroup]="form" (ngSubmit)="salvar()" class="form-config">
+      <mat-form-field appearance="outline" class="field-valor">
+        <mat-label>Valor inicial (R$)</mat-label>
+        <input matInput type="number" formControlName="valorInicial" step="0.01" min="0" />
+        <mat-error>Valor inválido</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field-intervalo">
+        <mat-label>Intervalo (quantidade)</mat-label>
+        <input matInput type="number" formControlName="intervaloQuantidade" min="1" />
+        <mat-error>Informe um número &gt; 0</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field-unidade">
+        <mat-label>Unidade do intervalo</mat-label>
+        <mat-select formControlName="intervaloUnidade">
+          <mat-option value="SEGUNDOS">Segundos</mat-option>
+          <mat-option value="MINUTOS">Minutos</mat-option>
+          <mat-option value="HORAS">Horas</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field-valor-intervalo">
+        <mat-label>Valor por intervalo (R$)</mat-label>
+        <input matInput type="number" formControlName="valorPorIntervalo" step="0.01" min="0" />
+        <mat-error>Valor inválido</mat-error>
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || salvando">
+        <mat-icon>save</mat-icon>
+        Salvar e ativar
+      </button>
+    </form>
+    @if (msg) {
+      <p class="msg" [class.erro]="erro">{{ msg }}</p>
+    }
+  </mat-card-content>
+</mat-card>

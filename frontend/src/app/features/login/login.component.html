@@ -1,0 +1,44 @@
+<div class="login-page">
+  <div class="login-main">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <mat-card-title>Controle de Estacionamento</mat-card-title>
+        <mat-card-subtitle>Entre com seu e-mail e senha.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>E-mail</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="username" />
+            <mat-error>Informe um e-mail válido</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Senha</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="senha" autocomplete="current-password" />
+            <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" [attr.aria-label]="hidePassword ? 'Mostrar senha' : 'Ocultar senha'">
+              <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+            <mat-error>Senha obrigatória (mín. 4 caracteres)</mat-error>
+          </mat-form-field>
+          @if (erro) {
+            <p class="error-msg">{{ erro }}</p>
+          }
+          <button mat-flat-button color="primary" type="submit" class="full-width" [disabled]="form.invalid || loading">
+            @if (loading) {
+              <mat-spinner diameter="24"></mat-spinner>
+            } @else {
+              Entrar
+            }
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <footer class="login-footer">
+    <div class="login-footer-line"></div>
+    <div class="login-footer-text">
+      Controle de Estacionamento · Versão 1.0.0
+    </div>
+    <div class="login-footer-line"></div>
+  </footer>
+</div>

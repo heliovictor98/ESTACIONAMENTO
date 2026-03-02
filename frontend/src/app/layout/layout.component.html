@@ -1,0 +1,54 @@
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav #sidenav [opened]="sidenavOpened" [mode]="sidenavMode" class="sidenav">
+    <div class="sidenav-inner">
+      <div class="sidenav-header">
+        <span class="logo">Estacionamento</span>
+      </div>
+      <mat-nav-list class="sidenav-nav">
+        <a mat-list-item routerLink="/estacionamento" routerLinkActive="active">
+          <mat-icon matListItemIcon>local_parking</mat-icon>
+          <span matListItemTitle>Estacionamento</span>
+        </a>
+        @if (auth.isGerente()) {
+          <a mat-list-item routerLink="/config-tarifa" routerLinkActive="active">
+            <mat-icon matListItemIcon>settings</mat-icon>
+            <span matListItemTitle>Config. Tarifa</span>
+          </a>
+        }
+      </mat-nav-list>
+      <div class="sidenav-footer">
+        <div class="sidenav-footer-line"></div>
+        <div class="sidenav-footer-text">
+          <div>Controle de Estacionamento</div>
+          <div>Versão 1.0.0</div>
+        </div>
+        <div class="sidenav-footer-line"></div>
+      </div>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content class="main-content">
+    <mat-toolbar color="primary" class="toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()" type="button" aria-label="Menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-title">Controle de Estacionamento</span>
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" type="button" aria-label="Usuário">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <div class="user-menu-header" matMenuItem>
+          <strong>{{ auth.usuarioAtual()?.nome }}</strong>
+          <span class="perfil">{{ auth.usuarioAtual()?.perfil === 'GERENTE' ? 'Gerente' : 'Funcionário' }}</span>
+        </div>
+        <button mat-menu-item (click)="auth.logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
