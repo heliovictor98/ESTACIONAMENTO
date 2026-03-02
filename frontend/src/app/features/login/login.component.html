@@ -3,7 +3,7 @@
     <mat-card class="login-card">
       <mat-card-header>
         <mat-card-title>Controle de Estacionamento</mat-card-title>
-        <mat-card-subtitle>Entre com seu e-mail e senha.</mat-card-subtitle>
+        <mat-card-subtitle>Entre com seu e-mail e senha. No primeiro acesso, deixe a senha em branco.</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -18,7 +18,8 @@
             <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" [attr.aria-label]="hidePassword ? 'Mostrar senha' : 'Ocultar senha'">
               <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
             </button>
-            <mat-error>Senha obrigatória (mín. 4 caracteres)</mat-error>
+            <mat-hint>Primeiro acesso: deixe em branco</mat-hint>
+            <mat-error>Senha inválida</mat-error>
           </mat-form-field>
           @if (erro) {
             <p class="error-msg">{{ erro }}</p>

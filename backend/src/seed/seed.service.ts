@@ -30,12 +30,14 @@ export class SeedService implements OnModuleInit {
         senhaHash: hash,
         nome: 'Gerente',
         perfil: PerfilUsuario.GERENTE,
+        ativo: true,
       }),
       this.userRepo.create({
         email: 'funcionario@estacionamento.com',
         senhaHash: hash,
         nome: 'Funcionário',
         perfil: PerfilUsuario.FUNCIONARIO,
+        ativo: true,
       }),
     ]);
     console.log('Seed: usuários criados (gerente@estacionamento.com / funcionario@estacionamento.com, senha: 123456)');

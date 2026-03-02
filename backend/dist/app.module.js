@@ -16,6 +16,7 @@ const registro_estacionamento_entity_1 = require("./entities/registro-estacionam
 const auth_module_1 = require("./auth/auth.module");
 const config_tarifa_module_1 = require("./config-tarifa/config-tarifa.module");
 const estacionamento_module_1 = require("./estacionamento/estacionamento.module");
+const funcionarios_module_1 = require("./funcionarios/funcionarios.module");
 const seed_service_1 = require("./seed/seed.service");
 let AppModule = class AppModule {
 };
@@ -34,6 +35,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             config_tarifa_module_1.ConfigTarifaModule,
             estacionamento_module_1.EstacionamentoModule,
+            funcionarios_module_1.FuncionariosModule,
         ],
         providers: [seed_service_1.SeedService],
     })

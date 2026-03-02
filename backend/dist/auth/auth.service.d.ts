@@ -18,11 +18,16 @@ export interface LoginResponse {
         nome: string;
         perfil: PerfilUsuario;
     };
+    primeiroAcesso?: boolean;
 }
 export declare class AuthService {
     private userRepo;
     private jwtService;
     constructor(userRepo: Repository<User>, jwtService: JwtService);
     login(dto: LoginDto): Promise<LoginResponse>;
+    definirSenha(userId: number, novaSenha: string): Promise<void>;
     validateByPayload(payload: JwtPayload): Promise<User | null>;
+    me(userId: number): Promise<LoginResponse['usuario'] & {
+        primeiroAcesso: boolean;
+    }>;
 }

@@ -7,6 +7,7 @@ import { RegistroEstacionamento } from './entities/registro-estacionamento.entit
 import { AuthModule } from './auth/auth.module';
 import { ConfigTarifaModule } from './config-tarifa/config-tarifa.module';
 import { EstacionamentoModule } from './estacionamento/estacionamento.module';
+import { FuncionariosModule } from './funcionarios/funcionarios.module';
 import { SeedService } from './seed/seed.service';
 
 @Module({
@@ -22,6 +23,7 @@ import { SeedService } from './seed/seed.service';
     AuthModule,
     ConfigTarifaModule,
     EstacionamentoModule,
+    FuncionariosModule,
   ],
   providers: [SeedService],
 })

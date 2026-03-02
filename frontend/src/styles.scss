@@ -2,8 +2,42 @@
 
 @include mat.core();
 
-$estacionamento-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
-$estacionamento-accent: mat.m2-define-palette(mat.$m2-indigo-palette, A200, A100, A400);
+// Paleta verde musgo (estilo claro) — cor base: #1D4A00
+$musgo-palette: (
+  50: #e8f0e4,
+  100: #c5ddb8,
+  200: #9fc98a,
+  300: #79b55c,
+  400: #4d9a2e,
+  500: #1D4A00,
+  600: #174200,
+  700: #123900,
+  800: #0c3100,
+  900: #062800,
+  A100: #a8e082,
+  A200: #8bd95c,
+  A400: #6bcf2e,
+  A700: #5ab81f,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: white,
+    A700: white,
+  ),
+);
+
+$estacionamento-primary: mat.m2-define-palette($musgo-palette);
+$estacionamento-accent: mat.m2-define-palette($musgo-palette, A200, A100, A400);
 $estacionamento-theme: mat.m2-define-light-theme((
   color: (
     primary: $estacionamento-primary,

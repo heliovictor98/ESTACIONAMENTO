@@ -1,0 +1,39 @@
+.toolbar-list {
+  margin-bottom: 1rem;
+}
+
+.toolbar-list button mat-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.section-title {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.msg {
+  margin: 0.75rem 0;
+  &.erro {
+    color: #c62828;
+  }
+}
+
+table {
+  width: 100%;
+  margin-top: 0.5rem;
+
+  th,
+  td {
+    padding: 0.5rem 0.75rem;
+  }
+  .mat-mdc-icon-button {
+    margin: 0 2px;
+  }
+}
+
+.empty {
+  color: #666;
+  margin: 1rem 0;
+}

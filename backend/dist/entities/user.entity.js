@@ -9,13 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.PerfilUsuario = void 0;
+exports.User = exports.PRIMEIRO_ACESSO_SENHA = exports.PerfilUsuario = void 0;
 const typeorm_1 = require("typeorm");
 var PerfilUsuario;
 (function (PerfilUsuario) {
     PerfilUsuario["GERENTE"] = "GERENTE";
     PerfilUsuario["FUNCIONARIO"] = "FUNCIONARIO";
 })(PerfilUsuario || (exports.PerfilUsuario = PerfilUsuario = {}));
+exports.PRIMEIRO_ACESSO_SENHA = '__PRIMEIRO_ACESSO__';
 let User = class User {
 };
 exports.User = User;
@@ -36,9 +37,21 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "nome", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'text', length: 20, nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "telefone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "endereco", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'text', enum: PerfilUsuario }),
     __metadata("design:type", String)
 ], User.prototype, "perfil", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "ativo", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)

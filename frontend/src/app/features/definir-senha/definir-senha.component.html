@@ -1,0 +1,41 @@
+<div class="definir-senha-page">
+  <div class="definir-senha-main">
+    <mat-card class="definir-senha-card">
+      <mat-card-header>
+        <mat-card-title>Primeiro acesso</mat-card-title>
+        <mat-card-subtitle>Defina uma senha para acessar o sistema.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nova senha</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="novaSenha" minlength="4" />
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" tabindex="-1">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-hint>Mínimo 4 caracteres</mat-hint>
+            <mat-error>Informe pelo menos 4 caracteres</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirmar senha</mat-label>
+            <input matInput [type]="hideConfirm ? 'password' : 'text'" formControlName="confirmar" />
+            <button mat-icon-button matSuffix type="button" (click)="hideConfirm = !hideConfirm" tabindex="-1">
+              <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error>Confirme a senha</mat-error>
+          </mat-form-field>
+          @if (erro) {
+            <p class="error-msg">{{ erro }}</p>
+          }
+          <button mat-flat-button color="primary" type="submit" class="full-width" [disabled]="form.invalid || loading">
+            @if (loading) {
+              <mat-spinner diameter="24"></mat-spinner>
+            } @else {
+              Definir senha
+            }
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

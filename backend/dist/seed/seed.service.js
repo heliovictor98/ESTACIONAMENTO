@@ -40,12 +40,14 @@ let SeedService = class SeedService {
                 senhaHash: hash,
                 nome: 'Gerente',
                 perfil: user_entity_1.PerfilUsuario.GERENTE,
+                ativo: true,
             }),
             this.userRepo.create({
                 email: 'funcionario@estacionamento.com',
                 senhaHash: hash,
                 nome: 'Funcionário',
                 perfil: user_entity_1.PerfilUsuario.FUNCIONARIO,
+                ativo: true,
             }),
         ]);
         console.log('Seed: usuários criados (gerente@estacionamento.com / funcionario@estacionamento.com, senha: 123456)');

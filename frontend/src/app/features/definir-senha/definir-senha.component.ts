@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-definir-senha',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,36 +23,38 @@ import { AuthService } from '../../core/auth.service';
     MatIconModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  templateUrl: './definir-senha.component.html',
+  styleUrl: './definir-senha.component.scss',
 })
-export class LoginComponent {
+export class DefinirSenhaComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
 
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    senha: [''], // Em branco no primeiro acesso; o backend orienta se for o caso
+    novaSenha: ['', [Validators.required, Validators.minLength(4)]],
+    confirmar: ['', [Validators.required]],
   });
   loading = false;
   erro = '';
   hidePassword = true;
-
-  togglePasswordVisibility(): void {
-    this.hidePassword = !this.hidePassword;
-  }
+  hideConfirm = true;
 
   onSubmit(): void {
     if (this.form.invalid) return;
+    const nova = this.form.value.novaSenha!;
+    const conf = this.form.value.confirmar!;
+    if (nova !== conf) {
+      this.erro = 'As senhas não coincidem.';
+      return;
+    }
     this.loading = true;
     this.erro = '';
-    const senha = this.form.value.senha ?? '';
-    this.auth.login(this.form.value.email!, senha).subscribe({
-      next: (res) => this.router.navigate(res.primeiroAcesso ? ['/definir-senha'] : ['/']),
+    this.auth.definirSenha(nova).subscribe({
+      next: () => this.router.navigate(['/']),
       error: (err) => {
         this.loading = false;
-        this.erro = err.error?.message || 'Falha no login. Tente novamente.';
+        this.erro = err.error?.message || 'Erro ao definir senha. Tente novamente.';
       },
     });
   }
