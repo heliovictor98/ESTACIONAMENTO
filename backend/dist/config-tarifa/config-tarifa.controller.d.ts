@@ -5,12 +5,14 @@ declare class UpdateConfigTarifaBodyDto implements UpdateConfigTarifaDto {
     intervaloQuantidade?: number;
     intervaloUnidade?: UnidadeIntervalo;
     valorPorIntervalo?: number;
+    vagasTotais?: number;
 }
 declare class CreateConfigTarifaBodyDto {
     valorInicial: number;
     intervaloQuantidade: number;
     intervaloUnidade: UnidadeIntervalo;
     valorPorIntervalo: number;
+    vagasTotais?: number;
 }
 export declare class ConfigTarifaController {
     private service;

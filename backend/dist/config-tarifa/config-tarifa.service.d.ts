@@ -5,6 +5,7 @@ export interface UpdateConfigTarifaDto {
     intervaloQuantidade?: number;
     intervaloUnidade?: UnidadeIntervalo;
     valorPorIntervalo?: number;
+    vagasTotais?: number;
 }
 export declare class ConfigTarifaService {
     private repo;
@@ -13,11 +14,12 @@ export declare class ConfigTarifaService {
     findAll(): Promise<ConfigTarifa[]>;
     update(id: number, dto: UpdateConfigTarifaDto): Promise<ConfigTarifa>;
     private desativarTodas;
-    create(dto: Omit<UpdateConfigTarifaDto, never> & {
+    create(dto: {
         valorInicial: number;
         intervaloQuantidade: number;
         intervaloUnidade: UnidadeIntervalo;
         valorPorIntervalo: number;
+        vagasTotais?: number;
     }): Promise<ConfigTarifa>;
     setAtiva(id: number): Promise<ConfigTarifa>;
 }

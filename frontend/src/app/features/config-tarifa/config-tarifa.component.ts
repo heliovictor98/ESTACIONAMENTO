@@ -17,6 +17,7 @@ interface ConfigTarifa {
   intervaloQuantidade: number;
   intervaloUnidade: UnidadeIntervalo;
   valorPorIntervalo: number;
+  vagasTotais: number;
   ativo: boolean;
 }
 
@@ -45,6 +46,7 @@ export class ConfigTarifaComponent implements OnInit {
     intervaloQuantidade: [20, [Validators.required, Validators.min(1)]],
     intervaloUnidade: ['SEGUNDOS' as UnidadeIntervalo, Validators.required],
     valorPorIntervalo: [0.3, [Validators.required, Validators.min(0)]],
+    vagasTotais: [0, [Validators.required, Validators.min(0)]],
   });
   configAtiva: ConfigTarifa | null = null;
   salvando = false;
@@ -61,7 +63,16 @@ export class ConfigTarifaComponent implements OnInit {
 
   carregarAtiva(): void {
     this.http.get<ConfigTarifa>('/api/config-tarifa/ativa').subscribe({
-      next: (c) => (this.configAtiva = c),
+      next: (c) => {
+        this.configAtiva = c;
+        this.form.patchValue({
+          valorInicial: c.valorInicial,
+          intervaloQuantidade: c.intervaloQuantidade,
+          intervaloUnidade: c.intervaloUnidade,
+          valorPorIntervalo: c.valorPorIntervalo,
+          vagasTotais: c.vagasTotais ?? 0,
+        });
+      },
       error: () => (this.configAtiva = null),
     });
   }
@@ -71,7 +82,10 @@ export class ConfigTarifaComponent implements OnInit {
     this.salvando = true;
     this.msg = '';
     this.erro = false;
-    const body = this.form.value;
+    const body = {
+      ...this.form.value,
+      vagasTotais: this.form.value.vagasTotais ?? 0,
+    };
     this.http.post<ConfigTarifa>('/api/config-tarifa', body).subscribe({
       next: (c) => {
         this.configAtiva = c;

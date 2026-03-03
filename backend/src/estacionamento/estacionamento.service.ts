@@ -1,15 +1,20 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, DeepPartial } from 'typeorm';
 import { RegistroEstacionamento } from '../entities/registro-estacionamento.entity';
 import { ConfigTarifaService } from '../config-tarifa/config-tarifa.service';
 import { UnidadeIntervalo } from '../entities/config-tarifa.entity';
 
+/** Aceita formato antigo (ABC-1234) e Mercosul (ABC4D67); retorna em maiúsculas sem hífen. */
+function normalizarPlaca(placa: string): string {
+  return placa.replace(/\s/g, '').replace(/-/g, '').toUpperCase();
+}
+
 export interface EntradaDto {
   placa: string;
-  marca: string;
-  modelo: string;
-  cor: string;
+  marca?: string;
+  modelo?: string;
+  cor?: string;
 }
 
 export interface SaidaResult {
@@ -27,8 +32,9 @@ export class EstacionamentoService {
   ) {}
 
   async entrada(dto: EntradaDto): Promise<RegistroEstacionamento> {
+    const placaNorm = normalizarPlaca(dto.placa);
     const emAberto = await this.repo.findOne({
-      where: { placa: dto.placa.toUpperCase(), horarioSaida: IsNull() },
+      where: { placa: placaNorm, horarioSaida: IsNull() },
     });
     if (emAberto) {
       throw new BadRequestException(
@@ -36,12 +42,12 @@ export class EstacionamentoService {
       );
     }
     const reg = this.repo.create({
-      placa: dto.placa.toUpperCase(),
-      marca: dto.marca,
-      modelo: dto.modelo,
-      cor: dto.cor,
+      placa: placaNorm,
+      marca: dto.marca?.trim() || null,
+      modelo: dto.modelo?.trim() || null,
+      cor: dto.cor?.trim() || null,
       horarioEntrada: new Date(),
-    });
+    } as DeepPartial<RegistroEstacionamento>);
     return this.repo.save(reg);
   }
 
@@ -108,7 +114,7 @@ export class EstacionamentoService {
 
   async saidaPorPlaca(placa: string): Promise<SaidaResult> {
     const registro = await this.repo.findOne({
-      where: { placa: placa.toUpperCase(), horarioSaida: IsNull() },
+      where: { placa: normalizarPlaca(placa), horarioSaida: IsNull() },
     });
     if (!registro) {
       throw new NotFoundException(
@@ -145,6 +151,39 @@ export class EstacionamentoService {
       qb.andWhere('r.horario_entrada <= :dataFim', { dataFim: filtro.dataFim });
     }
     return qb.getMany();
+  }
+
+  /** Registros já encerrados (com horario_saida), paginado, com filtro por placa e data (da saída). */
+  async listarEncerrados(filtro: {
+    page?: number;
+    pageSize?: number;
+    placa?: string;
+    dataInicio?: string;
+    dataFim?: string;
+  }): Promise<{ data: RegistroEstacionamento[]; total: number }> {
+    const page = Math.max(1, filtro.page ?? 1);
+    const pageSize = Math.min(100, Math.max(1, filtro.pageSize ?? 10));
+    const skip = (page - 1) * pageSize;
+
+    const qb = this.repo
+      .createQueryBuilder('r')
+      .where('r.horario_saida IS NOT NULL')
+      .orderBy('r.horario_saida', 'DESC');
+
+    if (filtro?.placa?.trim()) {
+      qb.andWhere('r.placa LIKE :placa', { placa: `%${filtro.placa.trim()}%` });
+    }
+    if (filtro?.dataInicio) {
+      qb.andWhere('r.horario_saida >= :dataInicio', {
+        dataInicio: filtro.dataInicio,
+      });
+    }
+    if (filtro?.dataFim) {
+      qb.andWhere('r.horario_saida <= :dataFim', { dataFim: filtro.dataFim });
+    }
+
+    const [data, total] = await qb.skip(skip).take(pageSize).getManyAndCount();
+    return { data, total };
   }
 
   async findOne(id: number): Promise<RegistroEstacionamento> {

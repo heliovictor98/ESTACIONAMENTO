@@ -2,9 +2,9 @@ import { EstacionamentoService, EntradaDto, SaidaResult } from './estacionamento
 import { RegistroEstacionamento } from '../entities/registro-estacionamento.entity';
 declare class EntradaBodyDto implements EntradaDto {
     placa: string;
-    marca: string;
-    modelo: string;
-    cor: string;
+    marca?: string;
+    modelo?: string;
+    cor?: string;
 }
 export declare class EstacionamentoController {
     private service;
@@ -13,6 +13,10 @@ export declare class EstacionamentoController {
     saida(id: number): Promise<SaidaResult>;
     saidaPorPlaca(placa: string): Promise<SaidaResult>;
     listarEmAberto(): Promise<RegistroEstacionamento[]>;
+    listarEncerrados(page?: string, pageSize?: string, placa?: string, dataInicio?: string, dataFim?: string): Promise<{
+        data: RegistroEstacionamento[];
+        total: number;
+    }>;
     listarTodos(placa?: string, dataInicio?: string, dataFim?: string): Promise<RegistroEstacionamento[]>;
     findOne(id: number): Promise<RegistroEstacionamento>;
 }

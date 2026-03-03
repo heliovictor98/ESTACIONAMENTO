@@ -50,6 +50,10 @@ __decorate([
     __metadata("design:type", Number)
 ], ConfigTarifa.prototype, "valorPorIntervalo", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'int', name: 'vagas_totais', default: 0 }),
+    __metadata("design:type", Number)
+], ConfigTarifa.prototype, "vagasTotais", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'boolean', default: true }),
     __metadata("design:type", Boolean)
 ], ConfigTarifa.prototype, "ativo", void 0);

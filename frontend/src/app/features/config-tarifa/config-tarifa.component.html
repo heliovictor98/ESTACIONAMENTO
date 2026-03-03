@@ -9,6 +9,7 @@
         <strong>Em uso:</strong> Valor inicial <strong>R$ {{ configAtiva.valorInicial | number:'1.2-2' }}</strong>,
         a cada <strong>{{ configAtiva.intervaloQuantidade }} {{ labelUnidade(configAtiva.intervaloUnidade) }}</strong>
         adiciona <strong>R$ {{ configAtiva.valorPorIntervalo | number:'1.2-2' }}</strong>.
+        <strong>Vagas totais:</strong> <strong>{{ configAtiva.vagasTotais ?? 0 }}</strong>.
       </div>
     } @else {
       <p class="empty">Nenhuma configuração ativa. Preencha o formulário e salve.</p>
@@ -38,6 +39,12 @@
         <mat-label>Valor por intervalo (R$)</mat-label>
         <input matInput type="number" formControlName="valorPorIntervalo" step="0.01" min="0" />
         <mat-error>Valor inválido</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field-vagas">
+        <mat-label>Vagas totais</mat-label>
+        <input matInput type="number" formControlName="vagasTotais" min="0" />
+        <mat-hint>Quantidade de vagas do estacionamento</mat-hint>
+        <mat-error>Informe um número &gt;= 0</mat-error>
       </mat-form-field>
       <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || salvando">
         <mat-icon>save</mat-icon>

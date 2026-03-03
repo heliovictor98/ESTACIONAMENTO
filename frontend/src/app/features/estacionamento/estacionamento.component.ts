@@ -41,6 +41,7 @@ interface ConfigTarifa {
   intervaloQuantidade: number;
   intervaloUnidade: UnidadeIntervalo;
   valorPorIntervalo: number;
+  vagasTotais?: number;
   ativo: boolean;
 }
 
@@ -66,11 +67,14 @@ export class EstacionamentoComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
+  /** Formato antigo: ABC-1234. Mercosul: ABC4D67. */
+  private placaPattern = /^([A-Za-z]{3}-?\d{4}|[A-Za-z]{3}\d[A-Za-z]\d{2})$/;
+
   formEntrada = this.fb.group({
-    placa: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
-    marca: ['', [Validators.required, Validators.maxLength(80)]],
-    modelo: ['', [Validators.required, Validators.maxLength(80)]],
-    cor: ['', [Validators.required, Validators.maxLength(40)]],
+    placa: ['', [Validators.required, Validators.pattern(this.placaPattern)]],
+    marca: ['', [Validators.maxLength(80)]],
+    modelo: ['', [Validators.maxLength(80)]],
+    cor: ['', [Validators.maxLength(40)]],
   });
   dataSource = new MatTableDataSource<RegistroEstacionamento>([]);
   displayedColumns: string[] = ['placa', 'marcaModelo', 'cor', 'entrada', 'valorAtual', 'acoes'];
@@ -88,6 +92,18 @@ export class EstacionamentoComponent implements OnInit, OnDestroy {
 
   get emAberto(): RegistroEstacionamento[] {
     return this.dataSource.data;
+  }
+
+  get vagasTotais(): number {
+    return this.configTarifa?.vagasTotais ?? 0;
+  }
+
+  get vagasOcupadas(): number {
+    return this.emAberto.length;
+  }
+
+  get vagasDisponiveis(): number {
+    return Math.max(0, this.vagasTotais - this.vagasOcupadas);
   }
 
   /** Opções de cor filtradas pelo texto digitado (autocomplete). */
@@ -184,6 +200,17 @@ export class EstacionamentoComponent implements OnInit, OnDestroy {
     return d.toLocaleString('pt-BR');
   }
 
+  /** Exibe tempo em minutos; a partir de 1h (60 min) exibe em horas. */
+  formatarTempoExibicao(tempoMinutos: number): string {
+    const min = Number(tempoMinutos);
+    if (min >= 60) {
+      const h = (min / 60).toFixed(2).replace('.', ',');
+      return h + ' h';
+    }
+    const m = min.toFixed(2).replace('.', ',');
+    return m + ' min';
+  }
+
   registrarEntrada(): void {
     if (this.formEntrada.invalid) return;
     this.loadingEntrada = true;
@@ -221,5 +248,59 @@ export class EstacionamentoComponent implements OnInit, OnDestroy {
         this.carregarEmAberto();
       },
     });
+  }
+
+  /** Abre a janela de impressão com cupom formatado para impressora térmica (80mm). */
+  imprimirCupom(): void {
+    if (!this.resultadoSaida) return;
+    const r = this.resultadoSaida.registro;
+    const entrada = r.horarioEntrada ? this.formatarData(r.horarioEntrada) : '–';
+    const saida = r.horarioSaida ? this.formatarData(r.horarioSaida) : '–';
+    const marca = r.marca || '–';
+    const modelo = r.modelo || '–';
+    const cor = r.cor || '–';
+    const tempo = this.formatarTempoExibicao(this.resultadoSaida.tempoMinutos);
+    const valor = this.resultadoSaida.valorCobrado.toFixed(2).replace('.', ',');
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Cupom Estacionamento</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Courier New', monospace; font-size: 12px; padding: 8px; width: 80mm; }
+    h1 { font-size: 14px; text-align: center; margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 6px; }
+    .linha { margin: 4px 0; }
+    .destaque { font-weight: bold; }
+    .centro { text-align: center; margin-top: 12px; }
+    @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  </style>
+</head>
+<body>
+  <h1>ESTACIONAMENTO</h1>
+  <div class="linha"><strong>Placa:</strong> ${r.placa}</div>
+  <div class="linha"><strong>Marca:</strong> ${marca}</div>
+  <div class="linha"><strong>Modelo:</strong> ${modelo}</div>
+  <div class="linha"><strong>Cor:</strong> ${cor}</div>
+  <div class="linha"><strong>Entrada:</strong> ${entrada}</div>
+  <div class="linha"><strong>Saída:</strong> ${saida}</div>
+  <div class="linha"><strong>Tempo:</strong> ${tempo}</div>
+  <div class="linha destaque centro"><strong>VALOR TOTAL: R$ ${valor}</strong></div>
+  <p class="centro" style="margin-top: 14px; font-size: 10px;">Obrigado. Volte sempre.</p>
+</body>
+</html>`;
+
+    const janela = window.open('', '_blank', 'width=320,height=480');
+    if (!janela) {
+      alert('Permita pop-ups para imprimir o cupom.');
+      return;
+    }
+    janela.document.write(html);
+    janela.document.close();
+    janela.focus();
+    janela.onafterprint = () => janela.close();
+    janela.print();
   }
 }

@@ -9,6 +9,7 @@ export declare class ConfigTarifa {
     intervaloQuantidade: number;
     intervaloUnidade: UnidadeIntervalo;
     valorPorIntervalo: number;
+    vagasTotais: number;
     ativo: boolean;
     createdAt: Date;
     updatedAt: Date;

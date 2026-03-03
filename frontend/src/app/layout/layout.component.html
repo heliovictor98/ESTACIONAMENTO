@@ -9,6 +9,10 @@
           <mat-icon matListItemIcon>local_parking</mat-icon>
           <span matListItemTitle>Estacionamento</span>
         </a>
+        <a mat-list-item routerLink="/historico" routerLinkActive="active">
+          <mat-icon matListItemIcon>history</mat-icon>
+          <span matListItemTitle>Histórico</span>
+        </a>
         @if (auth.isGerente()) {
           <a mat-list-item routerLink="/config-tarifa" routerLinkActive="active">
             <mat-icon matListItemIcon>settings</mat-icon>

@@ -52,6 +52,7 @@ export class SeedService implements OnModuleInit {
         intervaloQuantidade: 20,
         intervaloUnidade: UnidadeIntervalo.SEGUNDOS,
         valorPorIntervalo: 0.3,
+        vagasTotais: 0,
         ativo: true,
       }),
     );

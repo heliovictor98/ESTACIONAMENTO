@@ -40,6 +40,10 @@ export class ConfigTarifa {
   })
   valorPorIntervalo: number;
 
+  /** Quantidade total de vagas do estacionamento (configurável pelo gerente). */
+  @Column({ type: 'int', name: 'vagas_totais', default: 0 })
+  vagasTotais: number;
+
   @Column({ type: 'boolean', default: true })
   ativo: boolean;
 

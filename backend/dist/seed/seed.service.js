@@ -61,6 +61,7 @@ let SeedService = class SeedService {
             intervaloQuantidade: 20,
             intervaloUnidade: config_tarifa_entity_2.UnidadeIntervalo.SEGUNDOS,
             valorPorIntervalo: 0.3,
+            vagasTotais: 0,
             ativo: true,
         }));
         console.log('Seed: configuração de tarifa padrão criada (R$ 8,00 + R$ 0,30 a cada 20 segundos)');

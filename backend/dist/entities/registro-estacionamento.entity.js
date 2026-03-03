@@ -23,15 +23,15 @@ __decorate([
     __metadata("design:type", String)
 ], RegistroEstacionamento.prototype, "placa", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 80 }),
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], RegistroEstacionamento.prototype, "marca", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 80 }),
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], RegistroEstacionamento.prototype, "modelo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 40 }),
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], RegistroEstacionamento.prototype, "cor", void 0);
 __decorate([

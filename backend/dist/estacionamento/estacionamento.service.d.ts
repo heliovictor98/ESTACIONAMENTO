@@ -4,9 +4,9 @@ import { ConfigTarifaService } from '../config-tarifa/config-tarifa.service';
 import { UnidadeIntervalo } from '../entities/config-tarifa.entity';
 export interface EntradaDto {
     placa: string;
-    marca: string;
-    modelo: string;
-    cor: string;
+    marca?: string;
+    modelo?: string;
+    cor?: string;
 }
 export interface SaidaResult {
     registro: RegistroEstacionamento;
@@ -32,5 +32,15 @@ export declare class EstacionamentoService {
         dataInicio?: string;
         dataFim?: string;
     }): Promise<RegistroEstacionamento[]>;
+    listarEncerrados(filtro: {
+        page?: number;
+        pageSize?: number;
+        placa?: string;
+        dataInicio?: string;
+        dataFim?: string;
+    }): Promise<{
+        data: RegistroEstacionamento[];
+        total: number;
+    }>;
     findOne(id: number): Promise<RegistroEstacionamento>;
 }

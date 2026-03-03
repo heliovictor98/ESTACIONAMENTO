@@ -13,13 +13,13 @@ export class RegistroEstacionamento {
   @Column({ length: 20 })
   placa: string;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', nullable: true })
   marca: string;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', nullable: true })
   modelo: string;
 
-  @Column({ length: 40 })
+  @Column({ type: 'text', nullable: true })
   cor: string;
 
   @Column({ type: 'datetime', name: 'horario_entrada' })

@@ -21,6 +21,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/estacionamento/estacionamento.component').then(m => m.EstacionamentoComponent),
       },
       {
+        path: 'historico',
+        loadComponent: () => import('./features/historico/historico.component').then(m => m.HistoricoComponent),
+      },
+      {
         path: 'config-tarifa',
         canActivate: [roleGuard(['GERENTE'])],
         loadComponent: () => import('./features/config-tarifa/config-tarifa.component').then(m => m.ConfigTarifaComponent),

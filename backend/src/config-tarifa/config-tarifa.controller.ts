@@ -37,6 +37,11 @@ class UpdateConfigTarifaBodyDto implements UpdateConfigTarifaDto {
   @IsNumber()
   @Min(0)
   valorPorIntervalo?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  vagasTotais?: number;
 }
 
 class CreateConfigTarifaBodyDto {
@@ -54,6 +59,11 @@ class CreateConfigTarifaBodyDto {
   @IsNumber()
   @Min(0)
   valorPorIntervalo: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  vagasTotais?: number;
 }
 
 @Controller('config-tarifa')

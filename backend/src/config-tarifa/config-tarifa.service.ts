@@ -11,6 +11,7 @@ export interface UpdateConfigTarifaDto {
   intervaloQuantidade?: number;
   intervaloUnidade?: UnidadeIntervalo;
   valorPorIntervalo?: number;
+  vagasTotais?: number;
 }
 
 @Injectable()
@@ -45,14 +46,20 @@ export class ConfigTarifaService {
     if (ativas.length > 0) await this.repo.save(ativas);
   }
 
-  async create(dto: Omit<UpdateConfigTarifaDto, never> & {
+  async create(dto: {
     valorInicial: number;
     intervaloQuantidade: number;
     intervaloUnidade: UnidadeIntervalo;
     valorPorIntervalo: number;
+    vagasTotais?: number;
   }): Promise<ConfigTarifa> {
     await this.desativarTodas();
-    const config = this.repo.create({ ...dto, ativo: true });
+    let vagasTotais = dto.vagasTotais;
+    if (vagasTotais == null) {
+      const ativa = await this.repo.findOne({ where: { ativo: true } });
+      vagasTotais = ativa?.vagasTotais ?? 0;
+    }
+    const config = this.repo.create({ ...dto, vagasTotais, ativo: true });
     return this.repo.save(config);
   }
 

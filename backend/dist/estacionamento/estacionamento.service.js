@@ -19,23 +19,27 @@ const typeorm_2 = require("typeorm");
 const registro_estacionamento_entity_1 = require("../entities/registro-estacionamento.entity");
 const config_tarifa_service_1 = require("../config-tarifa/config-tarifa.service");
 const config_tarifa_entity_1 = require("../entities/config-tarifa.entity");
+function normalizarPlaca(placa) {
+    return placa.replace(/\s/g, '').replace(/-/g, '').toUpperCase();
+}
 let EstacionamentoService = class EstacionamentoService {
     constructor(repo, configTarifa) {
         this.repo = repo;
         this.configTarifa = configTarifa;
     }
     async entrada(dto) {
+        const placaNorm = normalizarPlaca(dto.placa);
         const emAberto = await this.repo.findOne({
-            where: { placa: dto.placa.toUpperCase(), horarioSaida: (0, typeorm_2.IsNull)() },
+            where: { placa: placaNorm, horarioSaida: (0, typeorm_2.IsNull)() },
         });
         if (emAberto) {
             throw new common_1.BadRequestException(`Já existe registro em aberto para a placa ${dto.placa}.`);
         }
         const reg = this.repo.create({
-            placa: dto.placa.toUpperCase(),
-            marca: dto.marca,
-            modelo: dto.modelo,
-            cor: dto.cor,
+            placa: placaNorm,
+            marca: dto.marca?.trim() || null,
+            modelo: dto.modelo?.trim() || null,
+            cor: dto.cor?.trim() || null,
             horarioEntrada: new Date(),
         });
         return this.repo.save(reg);
@@ -80,7 +84,7 @@ let EstacionamentoService = class EstacionamentoService {
     }
     async saidaPorPlaca(placa) {
         const registro = await this.repo.findOne({
-            where: { placa: placa.toUpperCase(), horarioSaida: (0, typeorm_2.IsNull)() },
+            where: { placa: normalizarPlaca(placa), horarioSaida: (0, typeorm_2.IsNull)() },
         });
         if (!registro) {
             throw new common_1.NotFoundException(`Nenhum registro em aberto para a placa ${placa}.`);
@@ -109,6 +113,28 @@ let EstacionamentoService = class EstacionamentoService {
             qb.andWhere('r.horario_entrada <= :dataFim', { dataFim: filtro.dataFim });
         }
         return qb.getMany();
+    }
+    async listarEncerrados(filtro) {
+        const page = Math.max(1, filtro.page ?? 1);
+        const pageSize = Math.min(100, Math.max(1, filtro.pageSize ?? 10));
+        const skip = (page - 1) * pageSize;
+        const qb = this.repo
+            .createQueryBuilder('r')
+            .where('r.horario_saida IS NOT NULL')
+            .orderBy('r.horario_saida', 'DESC');
+        if (filtro?.placa?.trim()) {
+            qb.andWhere('r.placa LIKE :placa', { placa: `%${filtro.placa.trim()}%` });
+        }
+        if (filtro?.dataInicio) {
+            qb.andWhere('r.horario_saida >= :dataInicio', {
+                dataInicio: filtro.dataInicio,
+            });
+        }
+        if (filtro?.dataFim) {
+            qb.andWhere('r.horario_saida <= :dataFim', { dataFim: filtro.dataFim });
+        }
+        const [data, total] = await qb.skip(skip).take(pageSize).getManyAndCount();
+        return { data, total };
     }
     async findOne(id) {
         const reg = await this.repo.findOne({ where: { id } });

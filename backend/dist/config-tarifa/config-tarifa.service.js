@@ -47,7 +47,12 @@ let ConfigTarifaService = class ConfigTarifaService {
     }
     async create(dto) {
         await this.desativarTodas();
-        const config = this.repo.create({ ...dto, ativo: true });
+        let vagasTotais = dto.vagasTotais;
+        if (vagasTotais == null) {
+            const ativa = await this.repo.findOne({ where: { ativo: true } });
+            vagasTotais = ativa?.vagasTotais ?? 0;
+        }
+        const config = this.repo.create({ ...dto, vagasTotais, ativo: true });
         return this.repo.save(config);
     }
     async setAtiva(id) {

@@ -17,25 +17,28 @@ const common_1 = require("@nestjs/common");
 const estacionamento_service_1 = require("./estacionamento.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const class_validator_1 = require("class-validator");
+const PLACA_BR_REGEX = /^[A-Za-z]{3}-?\d{4}$|^[A-Za-z]{3}\d[A-Za-z]\d{2}$/;
 class EntradaBodyDto {
 }
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.Matches)(PLACA_BR_REGEX, { message: 'Placa inválida. Use o formato antigo (ABC-1234) ou Mercosul (ABC4D67).' }),
     __metadata("design:type", String)
 ], EntradaBodyDto.prototype, "placa", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(80),
     __metadata("design:type", String)
 ], EntradaBodyDto.prototype, "marca", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(80),
     __metadata("design:type", String)
 ], EntradaBodyDto.prototype, "modelo", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(40),
     __metadata("design:type", String)
@@ -55,6 +58,15 @@ let EstacionamentoController = class EstacionamentoController {
     }
     listarEmAberto() {
         return this.service.listarEmAberto();
+    }
+    listarEncerrados(page, pageSize, placa, dataInicio, dataFim) {
+        return this.service.listarEncerrados({
+            page: page ? parseInt(page, 10) : undefined,
+            pageSize: pageSize ? parseInt(pageSize, 10) : undefined,
+            placa,
+            dataInicio,
+            dataFim,
+        });
     }
     listarTodos(placa, dataInicio, dataFim) {
         return this.service.listarTodos({ placa, dataInicio, dataFim });
@@ -92,6 +104,17 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], EstacionamentoController.prototype, "listarEmAberto", null);
+__decorate([
+    (0, common_1.Get)('encerrados'),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('pageSize')),
+    __param(2, (0, common_1.Query)('placa')),
+    __param(3, (0, common_1.Query)('dataInicio')),
+    __param(4, (0, common_1.Query)('dataFim')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String, String]),
+    __metadata("design:returntype", void 0)
+], EstacionamentoController.prototype, "listarEncerrados", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('placa')),
